@@ -24,6 +24,7 @@
     <ProjectGuid>{17a4a7f8-7641-4cb8-8d0b-98e5d322acfa}</ProjectGuid>
     <RootNamespace>ProiectLicenta</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>geoMap</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
