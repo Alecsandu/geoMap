@@ -1,4 +1,3 @@
-# geoMap
-
-## My project for the Bachelor's Degree Final Project
-It uses the OpenGL api to render different 3D models that can be used to teach students about the numerous projections of our planet Earth.
+# geoMap - Bachelor's Degree Final Project
+## Idea
+This program uses the OpenGL API to render different 3D models which can be used to teach students about the numerous projections of our planet
