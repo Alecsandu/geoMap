@@ -177,6 +177,7 @@
     <ClInclude Include="App\gui\imgui.h" />
     <ClInclude Include="App\gui\imgui_impl_glfw.h" />
     <ClInclude Include="App\gui\imgui_impl_opengl3.h" />
+    <ClInclude Include="App\gui\imgui_impl_opengl3_loader.h" />
     <ClInclude Include="App\gui\imgui_internal.h" />
     <ClInclude Include="App\gui\imstb_rectpack.h" />
     <ClInclude Include="App\gui\imstb_textedit.h" />
@@ -184,6 +185,7 @@
     <ClInclude Include="App\ObjectLoader\ObjectLoader.hpp" />
     <ClInclude Include="App\Shader\ShaderLoader.hpp" />
     <ClInclude Include="App\Texture\Texture.hpp" />
+    <ClInclude Include="App\Utility.hpp" />
     <ClInclude Include="App\VertexArray.hpp" />
     <ClInclude Include="App\WindowingSystem\WindowingSystem.hpp" />
     <ClInclude Include="App\VertexBuffer\VertexBuffer.hpp" />

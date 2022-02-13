@@ -25,144 +25,7 @@
 #include <GLFW/glfw3.h>
 #include <chrono>
 #include <SOIL2.h>
-
-bool new_item_frame = false;
-
-void drawNewItemFrame(Renderer& renderer)
-{
-	ImGui::Begin("Item nou");
-
-	ImGui::Text("Introduceti numele noii proiectii si al texturii(.obj si .dds):");  // Afiseaza text
-
-	static char obj_name[128] = { 0 }, dds_name[128] = { 0 };
-	ImGui::InputText("Nume fisier obj", &obj_name[0], 127);
-	ImGui::InputText("Nume fisier dds", &dds_name[0], 127);
-	if (ImGui::Button("Save"))
-	{
-		std::string name1 = std::string(obj_name),
-			name2 = std::string(dds_name);
-		std::cout << name1 << " " << name2 << "\n";
-		renderer.addImage(name1.c_str(), name2.c_str());
-		new_item_frame = false;
-	}
-	ImGui::Text("Performanta medie a aplicatiei %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	ImGui::End();
-}
-
-void centerWindow(GLFWwindow* window, GLFWmonitor* monitor)
-{
-	if (!monitor)
-		return;
-
-	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-	if (!mode)
-		return;
-
-	int monitorX, monitorY;
-	glfwGetMonitorPos(monitor, &monitorX, &monitorY);
-
-	int windowWidth, windowHeight;
-	glfwGetWindowSize(window, &windowWidth, &windowHeight);
-
-	glfwSetWindowPos(window,
-		monitorX + (mode->width - windowWidth) / 2,
-		monitorY + (mode->height - windowHeight) / 2);
-}
-
-void start_app()
-{
-	if (!glfwInit())
-		throw std::exception("Failed to initialize GLFW!");
-
-	glfwWindowHint(GLFW_DECORATED, 0);
-	glfwWindowHint(GLFW_SAMPLES, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	GLFWwindow* splash_screen = glfwCreateWindow(320, 240, "Undecorated Resizable", 0, 0);
-	glfwMakeContextCurrent(splash_screen);
-
-	glewExperimental = true;  // necesar pentru glfw core profile
-	if (glewInit() != GLEW_OK)
-	{
-		glfwTerminate();
-		throw std::exception("Failed to initialize GLEW!");
-	}
-
-	/* incarcarea imaginii ca o textura OpenGL */
-	const char* logo_path = "Miscellaneous/Logo/resizedLogo.png";
-	unsigned int logo_tex, vao_id, vbo_id, ebo_id;
-	int width, height;
-	unsigned char* image;
-	glGenTextures(1, &logo_tex);
-	glBindTexture(GL_TEXTURE_2D, logo_tex);
-	image = SOIL_load_image(logo_path, &width, &height, 0, SOIL_LOAD_RGB);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	SOIL_free_image_data(image);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	ShaderLoader shader("Shaders/splash_screen_vertex_shader.vert", "Shaders/splash_screen_fragment_shader.frag");
-
-	float varfuri[] = {
-		 // Coordonatele varfurilor      // Coordonate de texturare
-		-320.0f, -240.0f, 0.0f, 1.0f,    0.0f, 0.0f,
-		 320.0f, -240.0f, 0.0f, 1.0f,    1.0f, 0.0f,
-		 320.0f,  240.0f, 0.0f, 1.0f,    1.0f, 1.0f,
-		-320.0f,  240.0f, 0.0f, 1.0f,    0.0f, 1.0f
-	};
-	unsigned int indici[] = {
-		0, 1, 2,
-		0, 2, 3
-	};
-	glGenVertexArrays(1, &vao_id);
-	glGenBuffers(1, &vbo_id);
-	glGenBuffers(1, &ebo_id);
-	glBindVertexArray(vao_id);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_id);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(varfuri), varfuri, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_id);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indici), indici, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(4 * sizeof(float)));
-
-	auto start_time = std::chrono::high_resolution_clock::now();
-	auto current_time = std::chrono::high_resolution_clock::now();
-
-	centerWindow(splash_screen, glfwGetPrimaryMonitor());
-	do
-	{
-		shader.Bind();
-		/* activarea texturii */
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, logo_tex);
-		shader.set_uniform_matrix_4fv("mvp", glm::ortho(-320.0f, 320.0f, -240.0f, 240.0f, 0.0f, 1000.0f) * 
-			glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
-		shader.set_uniform_1i("myTexture", 0);
-		current_time = std::chrono::high_resolution_clock::now();
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-		glBindTexture(GL_TEXTURE_2D, 0);
-		shader.Unbind();
-		glfwSwapBuffers(splash_screen);
-		glfwPollEvents();
-	} while (std::chrono::duration_cast<std::chrono::seconds>(current_time - start_time).count() < 2);
-	glfwDestroyWindow(splash_screen);
-
-	glDisableVertexAttribArray(1);
-	glDisableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glDeleteBuffers(1, &vbo_id);
-	glDeleteBuffers(1, &ebo_id);
-	glBindVertexArray(0);
-	glDeleteVertexArrays(1, &vao_id);
-	shader.cleanup();
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glfwTerminate();
-}
+#include "Utility.hpp"
 
 void run_app()
 {
@@ -225,7 +88,7 @@ void run_app()
 	renderer.Init();
 	bool render_item = false;
 	unsigned int render_item_index = -1;
-	static std::string name = "";
+	//static std::string name = "";
 	do
 	{
 		renderer.Clear();
@@ -247,48 +110,9 @@ void run_app()
 				renderer.getVBOArray()[render_item_index].second.second);
 		}
 
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-		{
-			ImGui::Begin("Meniu principal");
-			ImGui::Text("Alegeti o proiectie:");
-
-			for (unsigned int i = 0; i < renderer.getFilesNames().size(); ++i)
-			{
-				if (ImGui::Button(renderer.getFilesNames()[i].c_str()))
-				{
-					render_item = true;
-					render_item_index = i;
-				}
-			}
-			ImGui::Spacing();
-			ImGui::Spacing();
-			ImGui::Spacing();
-			if (ImGui::Button("Adauga o noua proiectie"))
-				new_item_frame = true;
-
-			if (ImGui::Button("Opreste afisarea"))
-				render_item = false;
-
-			if (glfwGetKey(window, GLFW_KEY_S))
-			{
-				render_item = true;
-				render_item_index = 0;
-			}
-
-			if (ImGui::Button("Exit"))
-				break;
-
-			ImGui::Text("Performanta medie a aplicatiei %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-			ImGui::End();
-		}
-
-		if (new_item_frame)
-			drawNewItemFrame(renderer);
-
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		bool closeAppFlag = renderUI(renderer, window, render_item, render_item_index);
+		if (closeAppFlag)
+			break;
 
 		shader.Unbind();
 		va.Unbind();
@@ -315,7 +139,7 @@ int main()
 {
 	try
 	{
-		start_app();
+		//start_app();
 		run_app();
 	}
 	catch (std::exception e)

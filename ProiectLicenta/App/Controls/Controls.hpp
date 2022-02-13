@@ -1,15 +1,15 @@
-#include <GLFW/glfw3.h>
+#ifndef CONTROLS_CLASS_H
+#define CONTROLS_CLASS_H
 
+#include <GLFW/glfw3.h>
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
-
-using namespace glm;
 
 class Controls
 {
 public:
 	Controls();
-	~Controls();
+	~Controls() = default;
 
 	glm::mat4 getProjectionMatrix();
 	void setProjectionMatrix(glm::mat4);
@@ -38,3 +38,5 @@ private:
 	float m_mouse_speed;
 	float m_delta_time;
 };
+
+#endif CONTROLS_CLASS_H

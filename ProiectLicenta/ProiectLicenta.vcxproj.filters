@@ -125,5 +125,11 @@
     <ClInclude Include="App\VertexBufferLayout.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="App\Utility.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App\gui\imgui_impl_opengl3_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

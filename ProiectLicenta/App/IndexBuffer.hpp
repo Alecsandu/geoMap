@@ -5,7 +5,7 @@ class IndexBuffer
 {
 public:
 	IndexBuffer(const unsigned int*, unsigned int);
-	~IndexBuffer();
+	~IndexBuffer() = default;
 
 	void cleanup();
 

@@ -25,10 +25,6 @@ Controls::Controls()
 	m_matrice_model = glm::mat4(1.0f);							//
 }
 
-Controls::~Controls()
-{
-}
-
 /* Getter si setter pentru matricea proiectie */
 glm::mat4 Controls::getProjectionMatrix()
 {
