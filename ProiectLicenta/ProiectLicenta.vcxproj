@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="App\App.cpp" />
     <ClCompile Include="App\Controls\Controls.cpp" />
     <ClCompile Include="App\gui\imgui.cpp" />
     <ClCompile Include="App\gui\imgui_demo.cpp" />
@@ -172,6 +173,7 @@
     <ClCompile Include="App\VertexBufferLayout.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="App\App.hpp" />
     <ClInclude Include="App\Controls\Controls.hpp" />
     <ClInclude Include="App\gui\imconfig.h" />
     <ClInclude Include="App\gui\imgui.h" />
